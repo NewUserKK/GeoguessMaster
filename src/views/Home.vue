@@ -30,6 +30,7 @@
       <span :class="$style['page__title']"
         >Let's explore the world &#128526;</span
       >
+      <FlatButton :text="'Create map'" @click="$router.push('createMap')" />
     </div>
     <footer :class="$style['page__footer']">
       <span
@@ -51,12 +52,14 @@ import { defineComponent } from "vue";
 import Space from "@/components/Space.vue";
 import AuroraBackground from "@/components/AuroraBackground.vue";
 import CreateGameForm from "@/components/Home/CreateGameForm.vue";
+import FlatButton from "@/components/FlatButton.vue";
 
 export default defineComponent({
   components: {
     Space,
     AuroraBackground,
     CreateGameForm,
+    FlatButton,
   },
 });
 </script>

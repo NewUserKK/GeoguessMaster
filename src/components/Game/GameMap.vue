@@ -1,6 +1,8 @@
 <template>
   <div>
-    <div :class="$style['map']" ref="mapRef"></div>
+    <div :class="$style['map']">
+      <GoogleMap ref="mapRef" @on-map-click="onMapClick" />
+    </div>
     <IconButton
       v-if="
         store.state.generalSettings.device <= DeviceTypes.MobilePortrait &&
@@ -21,11 +23,12 @@
 
 <script lang="ts">
 /*global google*/
-import { defineComponent, onMounted, ref, watch, PropType } from "vue";
+import { defineComponent, ref, watch, PropType } from "vue";
 import { useStore } from "vuex";
 import { key } from "@/store";
 import { DeviceTypes } from "@/constants";
-import IconButton from "../IconButton.vue";
+import IconButton from "@/components/IconButton.vue";
+import GoogleMap from "@/components/Common/GoogleMap.vue";
 import { LatLngPropType } from "@/types";
 
 export default defineComponent({
@@ -51,12 +54,12 @@ export default defineComponent({
 
   components: {
     IconButton,
+    GoogleMap,
   },
 
   setup(props, context) {
-    let map: google.maps.Map;
-    const mapRef = ref<HTMLElement>();
-    const markers: google.maps.Marker[] = [];
+    const mapRef = ref();
+    const gotRandomLatLng = ref(false);
     const store = useStore(key);
 
     watch(
@@ -80,54 +83,40 @@ export default defineComponent({
     );
 
     const removeMarkers = (): void => {
-      markers.forEach((marker, index) => {
-        marker.setMap(null);
-        markers.splice(index, 1);
-      });
+      mapRef.value?.removeMarkers();
     };
 
     const putMarker = (position: google.maps.LatLng): void => {
-      const marker = new google.maps.Marker({
-        position: position,
-        map: map,
-      });
-      markers.push(marker);
+      mapRef.value?.putMarker(position);
     };
 
     const onClickHideMapButton = (): void => {
       context.emit("onClickHideMapButton");
     };
 
+    const onMapClick = (latLng: google.maps.LatLng): void => {
+      if (gotRandomLatLng.value) {
+        removeMarkers();
+        putMarker(latLng);
+        context.emit("updateSelectedLatLng", latLng);
+      }
+    };
+
     watch(
       () => props.randomLatLng,
       (newVal: google.maps.LatLng | null) => {
         if (newVal !== null) {
-          map.addListener("click", (e: any) => {
-            removeMarkers();
-            putMarker(e.latLng);
-            context.emit("updateSelectedLatLng", e.latLng);
-          });
+          gotRandomLatLng.value = true;
         }
       }
     );
-
-    onMounted(() => {
-      if (mapRef.value) {
-        map = new google.maps.Map(mapRef.value as HTMLElement, {
-          center: { lat: 37.86926, lng: -122.254811 },
-          zoom: 1,
-          fullscreenControl: false,
-          mapTypeControl: false,
-          streetViewControl: false,
-        });
-      }
-    });
 
     return {
       mapRef,
       store,
       DeviceTypes,
       onClickHideMapButton,
+      onMapClick,
     };
   },
 });

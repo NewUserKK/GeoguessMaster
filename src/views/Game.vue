@@ -58,7 +58,7 @@
       :roomNumber="store.state.gameSettings.roomNumber"
       :isGameReady="state.isGameReady"
     />
-    <Map
+    <GameMap
       :selectedMode="store.state.gameSettings.selectedMode"
       :isOwner="store.state.gameSettings.isOwner"
       :randomLatLng="store.state.inGame.randomLatLng"
@@ -142,7 +142,7 @@ import {
 
 import { key } from "@/store";
 import StreetView from "@/components/Game/StreetView.vue";
-import Map from "@/components/Game/Map.vue";
+import GameMap from "@/components/Game/GameMap.vue";
 import ScoreBoard from "@/components/Game/ScoreBoard.vue";
 import ResultModal from "@/components/Game/ResultModal.vue";
 import RoomNumberDialog from "@/components/Game/RoomNumberDialog.vue";
@@ -156,7 +156,7 @@ import { DeviceTypes } from "@/constants";
 export default defineComponent({
   components: {
     StreetView,
-    Map,
+    GameMap,
     ScoreBoard,
     ResultModal,
     RoomNumberDialog,
