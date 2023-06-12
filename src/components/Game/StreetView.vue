@@ -104,11 +104,14 @@ export default defineComponent({
 
     const getRandomLatLngInsideCountry = (): google.maps.LatLng => {
       const featureObj = feature(props.geoJSON);
+      const polygonBox = bbox(props.geoJSON);
 
       let pos;
       do {
-        pos = randomPosition(bbox(props.geoJSON));
-      } while (booleanPointInPolygon(pos, featureObj as Feature<MultiPolygon>));
+        pos = randomPosition(polygonBox);
+      } while (
+        !booleanPointInPolygon(pos, featureObj as Feature<MultiPolygon>)
+      );
       return new google.maps.LatLng(pos[1], pos[0]);
     };
 
