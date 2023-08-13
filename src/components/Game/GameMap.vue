@@ -140,6 +140,11 @@ export default defineComponent({
     opacity: 1;
   }
 
+  @media #{$high-resolution} {
+    width: 640px;
+    height: 480px;
+  }
+
   @media #{$mobile-landscape} {
     bottom: 72px;
     opacity: 0.7;
